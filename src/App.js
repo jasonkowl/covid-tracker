@@ -5,30 +5,48 @@ import {
   FormControl,
   Select,
   Card,
-  CardContent,
+  CardContent
 } from "@material-ui/core";
 import InfoBox from './InfoBox';
 import Map from './Map';
+import Table from './Table';
+import { sortData } from './util'; 
+import LineGraph from './LineGraph'
 
 function App() {
 const [countries, setCountries] = useState ([]);
 const [country, setCountry ] = useState ("worldwide");
+const [countryInfo, setCountryInfo ] = useState ({});
+const [tableData, setTableData] = useState ([]);
+
+useEffect(() => {
+  fetch('https://disease.sh/v3/covid-19/all' )
+  .then((response) => response.json())
+  .then(data => {
+      setCountryInfo(data);
+  })
+}, [])
 
 
 
 useEffect(() => {
   const getCountriesData = async () => {
-    await fetch('https://disease.sh/v3/covid-19/countries')
-    .then((response) => response.json())
-    .then((data) => {
-     const countries = data.map((country) =>(
-      {
-        name: country.country, // United states, Greece
-        value: country.countryInfo.iso2 // UK, USA, Greece
-      }
-     ));
-    
-    setCountries(countries);
+
+    // here is the code to show the worldwide info of the cards 
+
+        await fetch('https://disease.sh/v3/covid-19/countries')
+        .then((response) => response.json())
+        .then((data) => {
+        const countries = data.map((country) =>(
+          {
+            name: country.country, // United states, Greece
+            value: country.countryInfo.iso2 // UK, USA, Greece
+          }
+        ));
+
+      const sortedData =  sortData(data); 
+      setTableData(sortedData);
+      setCountries(countries);
     })
   }
 
@@ -39,7 +57,21 @@ const onCountryChange = async (event) => {
   const countryCode = event.target.value;
   // console.log("boooos", countryCode)
   setCountry(countryCode);
+
+  const url = 
+  countryCode === 'worldwide' 
+  ? 'https://disease.sh/v3/covid-19/all' 
+  : `https://disease.sh/v3/covid-19/countries/${countryCode}`;
+
+  await fetch(url) 
+  .then ((response) => response.json())
+  .then((data) => {
+    setCountry(countryCode); // all the of the data from the API from country response
+    setCountryInfo(data); // stores country infos into a variable 
+  })
 }
+
+console.log("country-info", countryInfo)
 
   return (
     <div className="app">
@@ -47,9 +79,12 @@ const onCountryChange = async (event) => {
         <div className="app__header">
           <h1> Covid-19 Tracker </h1>
             <FormControl className="app__dropdown">
-              <Select variant="outlined" onChange={onCountryChange} value={country}>
-              <MenuItem value="worldwide">worldwide</MenuItem>
-                {countries.map(country => (
+              <Select 
+               variant="outlined"
+               onChange={onCountryChange} 
+               value={country}>
+                  <MenuItem value="worldwide">worldwide</MenuItem>
+                    {countries.map(country => (
                   <MenuItem value={country.value}>{country.name}</MenuItem>
                   ))
                 }
@@ -58,23 +93,19 @@ const onCountryChange = async (event) => {
         </div>
         
         <div className="app__stats">
-
-                <InfoBox title="Coronavirus Cases" cases={123} total={2000} />
-
-                <InfoBox title="Recovered" cases={324} total={3000} />
-
-                <InfoBox title="Deaths" cases={543} total={4000} />
+                <InfoBox title="Coronavirus Cases" cases={countryInfo.todayCases} total={countryInfo.cases} />
+                <InfoBox title="Recovered" cases={countryInfo.todayRecovered} total={countryInfo.recovered} />
+                <InfoBox title="Deaths" cases={countryInfo.todayDeaths} total={countryInfo.deaths} />
         </div>
         <Map />
       </div>
       <Card className="app__right">
         <CardContent />
         <h3>Live Cases by Country</h3>
+        <Table countries={tableData} />
         <h3>Wordwide new cases</h3>
-
+        <LineGraph  />
         <CardContent />
-
-        {/* Table */}
         {/* Graph */}     
       </Card>
     </div>
