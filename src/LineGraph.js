@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
-import './LineGraph.css'
-import numeral, { multiply } from 'numeral'
+import numeral from 'numeral'
 
 const options ={
     legend:{
@@ -39,15 +38,15 @@ const options ={
             ticks: {
                 callback: function(value, index, values ) {
                     return numeral(value).format("0a");
-                    }
-                }
-            } 
-        ]   
-     }
-    }
+                    },
+                },
+            },
+        ],
+     },
+    };
 
     
-    const buildChartData = (data, casesType ='cases') => {
+    const buildChartData = (data, casesType ) => {
         let chartData = [];
         let lastDataPoint;
 
@@ -63,27 +62,28 @@ const options ={
         lastDataPoint = data[casesType][date];
     }
         return chartData;
-    }
+    };
 
 
-function LineGraph( { casesType = "cases "} ) {
+function LineGraph( { casesType, ...props } ) {
     const [data, setData] = useState ({});
 
     useEffect(() => {
         const fetchData = async () => {
             await fetch('https://disease.sh/v3/covid-19/historical/all?lastdays=120')
-            .then((response) => response.json())
-            .then((data)  => {
-                let chartData = buildChartData(data, "cases");
-                setData(chartData);
+            .then((response) => {
+               return response.json();
             })
-        }
+            .then((data)  => {
+                let chartData = buildChartData(data, casesType);
+                setData(chartData);
+            });
+        };
         fetchData();
-    }, []);
+    }, [casesType]);
 
     return (
-        <div>
-            <div className="ddsads">graph</div>
+        <div className={props.className}>
             {data?.length > 0 && (
                 <Line  
                 options={options}
@@ -92,17 +92,14 @@ function LineGraph( { casesType = "cases "} ) {
                     {
                         backgroundColor: "rgba(204, 16, 52, 0.15",
                         borderColor: "#CC1034",
-                        data: data  
-                    }
-                ]
+                        data: data , 
+                    },
+                ],
                 }} />
-            )}
-
-            )
-            
+            )}            
         </div>
  
-    )
+    );
 }
 
 export default LineGraph;
