@@ -1,6 +1,8 @@
 .infoBox {
     flex: 1;
     cursor: pointer;
+    text-align: center;
+    padding-top: 10px;
 }
 
 .infoBox:not(:last-child) {
@@ -31,4 +33,9 @@
 
 .infoBox__cases--green {
     color: lightgreen;
+}
+
+.infoBox .MuiCardContent-root {
+
+    padding: unset;
 }

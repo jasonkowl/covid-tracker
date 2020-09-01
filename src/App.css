@@ -19,9 +19,9 @@ body {
   justify-content: space-between;
 }
 
-.app__dropdown {
+/* .app__dropdown {
   background-color: white;
-}
+} */
 
 .app__header > h1 {
   color: #fc3c3c;
@@ -57,7 +57,6 @@ body {
 .app__graphTitle {
   margin-top: 15px;
 }
-
 
 
 @media (max-width: 990px) {

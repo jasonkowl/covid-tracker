@@ -5,14 +5,21 @@ import {
   FormControl,
   Select,
   Card,
-  CardContent
+  CardContent,
+  Paper,
+  Switch,
+  FormControlLabel
 } from "@material-ui/core";
+import { Brightness4Icon } from '@material-ui/icons/Brightness4';
 import InfoBox from './InfoBox';
 import Table from './Table';
 import { sortData, prettyPrintStat } from './util'; 
 import LineGraph from './LineGraph'
 import Map from "./Map";
 import "leaflet/dist/leaflet.css";
+import "leaflet-gesture-handling/dist/leaflet-gesture-handling.css";
+import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+
 
 
 
@@ -25,6 +32,8 @@ const [mapCenter, setMapCenter] = useState({ lat: 34.80746, lng: -40.4796 });
 const [mapZoom, setMapZoom] = useState(2);
 const [mapCountries, setMapCountries] = useState ([]);;
 const [casesType, setCasesType] = useState ("cases")
+// const [gestureHandling, setGestureHandling] = useState(false);
+const [darkMode, setDarkMode] = useState(false);
 
 useEffect(() => {
   fetch('https://disease.sh/v3/covid-19/all' )
@@ -61,6 +70,12 @@ useEffect(() => {
   getCountriesData(countries);
 }, [])
 
+const theme = createMuiTheme({
+  palette: {
+    type: darkMode ? "dark" : "light"
+  },
+})
+
 const onCountryChange = async (event) => {
   const countryCode = event.target.value;
   // console.log("boooos", countryCode)
@@ -86,46 +101,54 @@ const onCountryChange = async (event) => {
 console.log("country-info", countryInfo)
 
   return (
-    <div className="app">
-      <div className="app__left">
-        <div className="app__header">
-          <h1> Covid-19 Tracker </h1>
-            <FormControl className="app__dropdown">
-              <Select 
-               variant="outlined"
-               onChange={onCountryChange} 
-               value={country}>
-                  <MenuItem value="worldwide">worldwide</MenuItem>
-                    {countries.map(country => (
-                  <MenuItem value={country.value}>{country.name}</MenuItem>
-                  ))
-                }
-              </Select> 
-            </FormControl>
-        </div>
-        
-        <div className="app__stats">
-                <InfoBox isRed active={casesType === "cases"} onClick={(e) => setCasesType('cases')} title="Coronavirus Cases" cases={prettyPrintStat(countryInfo.todayCases)} total={countryInfo.cases} />
-                <InfoBox  active={casesType === "recovered"} onClick={(e) => setCasesType('recovered')} title="Recovered" cases={prettyPrintStat(countryInfo.todayRecovered)} total={countryInfo.recovered} />
-                <InfoBox  isRed active={casesType === "deaths"}onClick={(e) => setCasesType('deaths')} title="Deaths" cases={prettyPrintStat( countryInfo.todayDeaths)} total={countryInfo.deaths} />
-        </div>
-        <Map
-        center = {mapCenter}
-        zoom = {mapZoom}
-        countries ={mapCountries}
-        casesType ={casesType}
-         />
-      </div>
-      <Card className="app__right">
-        <CardContent />
-        <h3>Live Cases by Country</h3>
-        <Table countries={tableData} />
-              <h3 className="app__graphTitle">Wordwide new cases {casesType}</h3>
-        <LineGraph className="app__graph" casesType={casesType} />
-        <CardContent />
-        {/* Graph */}     
-      </Card>
-    </div>
+    <ThemeProvider theme={theme}>
+        <Paper style={{height: "100vh"}}>
+            <div className="app">
+              <div className="app__left">
+                <div className="app__header">
+                  <h1> Covid-19 Tracker </h1>
+                    <FormControl className="app__dropdown">
+                    <FormControlLabel 
+                    control={ <Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />}
+                    label="Dark"/>
+                      <Select 
+                      variant="outlined"
+                      onChange={onCountryChange} 
+                      value={country}>
+                          <MenuItem value="worldwide">worldwide</MenuItem>
+                            {countries.map(country => (
+                          <MenuItem value={country.value}>{country.name}</MenuItem>
+                          ))
+                        }
+                      </Select> 
+                    </FormControl>
+                </div>
+                
+                <div className="app__stats">
+                        <InfoBox isRed active={casesType === "cases"} onClick={(e) => setCasesType('cases')} title="Coronavirus Cases" cases={prettyPrintStat(countryInfo.todayCases)} total={countryInfo.cases} />
+                        <InfoBox  active={casesType === "recovered"} onClick={(e) => setCasesType('recovered')} title="Recovered" cases={prettyPrintStat(countryInfo.todayRecovered)} total={countryInfo.recovered} />
+                        <InfoBox  isRed active={casesType === "deaths"}onClick={(e) => setCasesType('deaths')} title="Deaths" cases={prettyPrintStat( countryInfo.todayDeaths)} total={countryInfo.deaths} />
+                </div>
+                  <Map
+                  center = {mapCenter}
+                  zoom = {mapZoom}
+                  countries ={mapCountries}
+                  casesType ={casesType}
+                  gestureHandling = {true}
+                />
+              </div>
+              <Card className="app__right">
+                <CardContent />
+                <h3>Live Cases by Country</h3>
+                <Table countries={tableData} />
+                      <h3 className="app__graphTitle">Wordwide new cases {casesType}</h3>
+                <LineGraph className="app__graph" casesType={casesType} />
+                <CardContent />
+                {/* Graph */}     
+              </Card>
+            </div>
+        </Paper>
+    </ThemeProvider>
   );
 }
 
