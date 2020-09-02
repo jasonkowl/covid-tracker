@@ -82,7 +82,7 @@ const onCountryChange = async (event) => {
   setCountry(countryCode);
 
   const url = 
-  countryCode === 'Worldwide' 
+  countryCode === 'worldwide' 
   ? 'https://disease.sh/v3/covid-19/all' 
   : `https://disease.sh/v3/covid-19/countries/${countryCode}`;
 
@@ -116,7 +116,7 @@ console.log("country-info", countryInfo)
                       variant="outlined"
                       onChange={onCountryChange} 
                       value={country}>
-                          <MenuItem value="worldwide">worldwide</MenuItem>
+                          <MenuItem value="worldwide">Worldwide</MenuItem>
                             {countries.map(country => (
                           <MenuItem value={country.value}>{country.name}</MenuItem>
                           ))
