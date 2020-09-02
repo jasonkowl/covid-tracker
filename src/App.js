@@ -10,7 +10,7 @@ import {
   Switch,
   FormControlLabel
 } from "@material-ui/core";
-import { Brightness4Icon } from '@material-ui/icons/Brightness4';
+import SettingsBrightnessRoundedIcon from '@material-ui/icons/SettingsBrightnessRounded';
 import InfoBox from './InfoBox';
 import Table from './Table';
 import { sortData, prettyPrintStat } from './util'; 
@@ -106,11 +106,12 @@ console.log("country-info", countryInfo)
             <div className="app">
               <div className="app__left">
                 <div className="app__header">
-                  <h1> Covid-19 Tracker </h1>
-                    <FormControl className="app__dropdown">
+                  <h1> Covid-19 Tracker </h1> 
+                 
                     <FormControlLabel 
-                    control={ <Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />}
-                    label="Dark"/>
+                    control={<Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />}
+                    label={<SettingsBrightnessRoundedIcon/>}/> 
+                    <FormControl className="app__dropdown">
                       <Select 
                       variant="outlined"
                       onChange={onCountryChange} 
