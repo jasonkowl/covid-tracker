@@ -82,7 +82,7 @@ const onCountryChange = async (event) => {
   setCountry(countryCode);
 
   const url = 
-  countryCode === 'worldwide' 
+  countryCode === 'Worldwide' 
   ? 'https://disease.sh/v3/covid-19/all' 
   : `https://disease.sh/v3/covid-19/countries/${countryCode}`;
 
@@ -102,7 +102,7 @@ console.log("country-info", countryInfo)
 
   return (
     <ThemeProvider theme={theme}>
-        <Paper style={{height: "100vh"}}>
+        <Paper style={{height: "100%"}}>
             <div className="app">
               <div className="app__left">
                 <div className="app__header">
@@ -110,7 +110,7 @@ console.log("country-info", countryInfo)
                  
                     <FormControlLabel 
                     control={<Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />}
-                    label={<SettingsBrightnessRoundedIcon/>}/> 
+                    label={<SettingsBrightnessRoundedIcon color="disabled" />}/> 
                     <FormControl className="app__dropdown">
                       <Select 
                       variant="outlined"
