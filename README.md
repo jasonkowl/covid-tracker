@@ -1,4 +1,4 @@
 
-## Available Scripts
+## COVID-19 Tracker App
 
-Covid 19 Tracker app built with React JS. Fetching data with API calls from the Open Disease data https://disease.sh/
+Built with React JS. Fetching data with API calls from the Open Disease data https://disease.sh/
